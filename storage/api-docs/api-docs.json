@@ -3,10 +3,6 @@
     "info": {
         "title": "Movie Review API",
         "description": "API para plataforma de reseñas de películas",
-        "contact": {
-            "name": "Movie Review Team",
-            "email": "admin@movie-review.com"
-        },
         "version": "1.0.0"
     },
     "paths": {
@@ -168,6 +164,367 @@
                     }
                 ]
             }
+        },
+        "/api/profile": {
+            "put": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Actualizar perfil del usuario autenticado",
+                "operationId": "ac662ae856fb1cc2239e27417f0496bd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "johndoe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Perfil actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/change-password": {
+            "put": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Cambiar contraseña del usuario autenticado",
+                "operationId": "c9cf137ca229152d78da153d798cb251",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "new_password",
+                                    "new_password_confirmation"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "currentpassword"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword"
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Contraseña cambiada exitosamente"
+                    },
+                    "400": {
+                        "description": "Contraseña actual incorrecta"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/genres": {
+            "get": {
+                "tags": [
+                    "Géneros"
+                ],
+                "summary": "Listar todos los géneros",
+                "operationId": "eb12635064fefadf7ff7e54900a73534",
+                "responses": {
+                    "200": {
+                        "description": "Lista de géneros obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "genre_id": {
+                                                "type": "integer"
+                                            },
+                                            "genre_name": {
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Géneros"
+                ],
+                "summary": "Crear nuevo género (Solo administradores)",
+                "operationId": "8596dc3b1780529a7ce51429eee5ed0a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "genre_name"
+                                ],
+                                "properties": {
+                                    "genre_name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "Acción"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Género creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "genre_id": {
+                                            "type": "integer"
+                                        },
+                                        "genre_name": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado - Se requieren permisos de administrador"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/genres/{id}": {
+            "get": {
+                "tags": [
+                    "Géneros"
+                ],
+                "summary": "Mostrar un género específico",
+                "operationId": "3e2ac2805d9f25d984bab075133bbb96",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del género",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Género encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "genre_id": {
+                                            "type": "integer"
+                                        },
+                                        "genre_name": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Género no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Géneros"
+                ],
+                "summary": "Actualizar un género",
+                "operationId": "65d9a201f51320eb4147a75f91a8119b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del género",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "genre_name"
+                                ],
+                                "properties": {
+                                    "genre_name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "Acción"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Género actualizado exitosamente"
+                    },
+                    "404": {
+                        "description": "Género no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Géneros"
+                ],
+                "summary": "Eliminar un género (Solo administradores)",
+                "operationId": "4ddc050edb0bf18c202c611a028f457f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del género",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Género eliminado exitosamente"
+                    },
+                    "403": {
+                        "description": "Acceso denegado - Se requieren permisos de administrador"
+                    },
+                    "404": {
+                        "description": "Género no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -183,6 +540,10 @@
         {
             "name": "Autenticación",
             "description": "Endpoints para registro, login y logout de usuarios"
+        },
+        {
+            "name": "Géneros",
+            "description": "Endpoints para gestión de géneros de películas"
         }
     ]
 }
