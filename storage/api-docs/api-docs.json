@@ -6,6 +6,287 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/actors": {
+            "get": {
+                "tags": [
+                    "Actores"
+                ],
+                "summary": "Listar todos los actores",
+                "operationId": "91a2ff1cae626a1a599ae2e37c48053c",
+                "responses": {
+                    "200": {
+                        "description": "Lista de actores obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "actor_id": {
+                                                "type": "integer"
+                                            },
+                                            "actor_name": {
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Actores"
+                ],
+                "summary": "Crear nuevo actor (Solo admin)",
+                "operationId": "49a96663e0b82b80d414aadfe3ce9646",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "actor_name"
+                                ],
+                                "properties": {
+                                    "actor_name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "Keanu Reeves"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Actor creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "actor_id": {
+                                            "type": "integer"
+                                        },
+                                        "actor_name": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado - Se requieren permisos de administrador"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/actors/{id}": {
+            "get": {
+                "tags": [
+                    "Actores"
+                ],
+                "summary": "Mostrar un actor específico",
+                "operationId": "4fb759b1f3e087f7af201edc9ce25a55",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del actor",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actor encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "actor_id": {
+                                            "type": "integer"
+                                        },
+                                        "actor_name": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Actor no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Actores"
+                ],
+                "summary": "Actualizar un actor",
+                "operationId": "72155b96b41dc985dd37fcca61aa339b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del actor",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "actor_name"
+                                ],
+                                "properties": {
+                                    "actor_name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "Keanu Reeves"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Actor actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "actor_id": {
+                                            "type": "integer"
+                                        },
+                                        "actor_name": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Actor no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Actores"
+                ],
+                "summary": "Eliminar un actor (Solo admin)",
+                "operationId": "3c8ca420c5c06fe690f87fc2315a967a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del actor",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actor eliminado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Actor eliminado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado - Se requieren permisos de administrador"
+                    },
+                    "404": {
+                        "description": "Actor no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -171,22 +452,22 @@
                     "Autenticación"
                 ],
                 "summary": "Actualizar perfil del usuario autenticado",
+                "description": "Permite al usuario autenticado actualizar únicamente su nombre de usuario. El correo electrónico no puede ser modificado.",
                 "operationId": "ac662ae856fb1cc2239e27417f0496bd",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "username"
+                                ],
                                 "properties": {
                                     "username": {
+                                        "description": "Nuevo nombre de usuario",
                                         "type": "string",
                                         "maxLength": 50,
                                         "example": "johndoe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "john@example.com"
                                     }
                                 },
                                 "type": "object"
@@ -202,9 +483,33 @@
                                 "schema": {
                                     "properties": {
                                         "message": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "example": "Perfil actualizado exitosamente"
                                         },
                                         "user": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "example": "johndoe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "john@example.com"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
                                             "type": "object"
                                         }
                                     },
@@ -214,7 +519,7 @@
                         }
                     },
                     "422": {
-                        "description": "Error de validación"
+                        "description": "Error de validación (por ejemplo, nombre de usuario duplicado o formato inválido)"
                     }
                 },
                 "security": [
@@ -324,7 +629,7 @@
                 "tags": [
                     "Géneros"
                 ],
-                "summary": "Crear nuevo género (Solo administradores)",
+                "summary": "Crear nuevo género (Solo admin)",
                 "operationId": "8596dc3b1780529a7ce51429eee5ed0a",
                 "requestBody": {
                     "required": true,
@@ -495,7 +800,7 @@
                 "tags": [
                     "Géneros"
                 ],
-                "summary": "Eliminar un género (Solo administradores)",
+                "summary": "Eliminar un género (Solo admin)",
                 "operationId": "4ddc050edb0bf18c202c611a028f457f",
                 "parameters": [
                     {
@@ -537,6 +842,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Actores",
+            "description": "Endpoints para gestión de actores de películas"
+        },
         {
             "name": "Autenticación",
             "description": "Endpoints para registro, login y logout de usuarios"
