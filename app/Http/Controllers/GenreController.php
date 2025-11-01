@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Genre;
 use App\Http\Requests\StoreGenreRequest;
 use App\Http\Requests\UpdateGenreRequest;
+use App\Http\Resources\GenreResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -21,25 +22,61 @@ class GenreController extends Controller
      *     path="/api/genres",
      *     summary="Listar todos los géneros",
      *     tags={"Géneros"},
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Número de géneros por página",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=15)
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Número de página",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Lista de géneros obtenida exitosamente",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="genre_id", type="integer"),
-     *                 @OA\Property(property="genre_name", type="string"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="genre_id", type="integer"),
+     *                     @OA\Property(property="genre_name", type="string"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer"),
+     *                 @OA\Property(property="last_page", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="total", type="integer"),
+     *                 @OA\Property(property="from", type="integer"),
+     *                 @OA\Property(property="to", type="integer")
+     *             ),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string"),
+     *                 @OA\Property(property="last", type="string"),
+     *                 @OA\Property(property="prev", type="string", nullable=true),
+     *                 @OA\Property(property="next", type="string", nullable=true)
      *             )
      *         )
      *     )
      * )
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $genres = Genre::all();
-        return response()->json($genres);
+        $perPage = $request->input('per_page', 15);
+        $genres = Genre::paginate($perPage);
+        return GenreResource::collection($genres)->response();
     }
 
     /**
@@ -81,7 +118,7 @@ class GenreController extends Controller
             'genre_name' => $request->genre_name,
         ]);
 
-        return response()->json($genre, 201);
+        return (new GenreResource($genre))->response()->setStatusCode(201);
     }
 
     /**
@@ -120,7 +157,7 @@ class GenreController extends Controller
             return response()->json(['message' => 'Género no encontrado'], 404);
         }
 
-        return response()->json($genre);
+        return (new GenreResource($genre))->response();
     }
 
     /**
@@ -169,7 +206,7 @@ class GenreController extends Controller
             'genre_name' => $request->genre_name,
         ]);
 
-        return response()->json($genre);
+        return (new GenreResource($genre))->response();
     }
 
     /**

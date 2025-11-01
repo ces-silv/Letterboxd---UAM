@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Actor;
 use App\Http\Requests\StoreActorRequest;
 use App\Http\Requests\UpdateActorRequest;
+use App\Http\Resources\ActorResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -21,25 +22,61 @@ class ActorController extends Controller
      *     path="/api/actors",
      *     summary="Listar todos los actores",
      *     tags={"Actores"},
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Número de actores por página",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=15)
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Número de página",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Lista de actores obtenida exitosamente",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="actor_id", type="integer"),
-     *                 @OA\Property(property="actor_name", type="string"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="actor_id", type="integer"),
+     *                     @OA\Property(property="actor_name", type="string"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer"),
+     *                 @OA\Property(property="last_page", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="total", type="integer"),
+     *                 @OA\Property(property="from", type="integer"),
+     *                 @OA\Property(property="to", type="integer")
+     *             ),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 @OA\Property(property="first", type="string"),
+     *                 @OA\Property(property="last", type="string"),
+     *                 @OA\Property(property="prev", type="string", nullable=true),
+     *                 @OA\Property(property="next", type="string", nullable=true)
      *             )
      *         )
      *     )
      * )
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $actors = Actor::all();
-        return response()->json($actors);
+        $perPage = $request->input('per_page', 15);
+        $actors = Actor::paginate($perPage);
+        return ActorResource::collection($actors)->response();
     }
 
     /**
@@ -81,7 +118,7 @@ class ActorController extends Controller
             'actor_name' => $request->actor_name,
         ]);
 
-        return response()->json($actor, 201);
+        return (new ActorResource($actor))->response()->setStatusCode(201);
     }
 
     /**
@@ -120,7 +157,7 @@ class ActorController extends Controller
             return response()->json(['message' => 'Actor no encontrado'], 404);
         }
 
-        return response()->json($actor);
+        return (new ActorResource($actor))->response();
     }
 
     /**
@@ -175,7 +212,7 @@ class ActorController extends Controller
             'actor_name' => $request->actor_name,
         ]);
 
-        return response()->json($actor);
+        return (new ActorResource($actor))->response();
     }
 
     /**

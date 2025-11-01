@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ActorController;
+use App\Http\Controllers\DirectorController;
 use App\Http\Controllers\GenreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,10 @@ Route::get('/genres/{id}', [GenreController::class, 'show']);
 // Rutas públicas de actores (solo lectura)
 Route::get('/actors', [ActorController::class, 'index']);
 Route::get('/actors/{id}', [ActorController::class, 'show']);
+
+// Rutas públicas de directores (solo lectura)
+Route::get('/directors', [DirectorController::class, 'index']);
+Route::get('/directors/{id}', [DirectorController::class, 'show']);
 
 // Rutas protegidas
 Route::middleware('auth:sanctum')->group(function () {
@@ -40,6 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Rutas de actores que requieren autenticación
     Route::put('/actors/{id}', [ActorController::class, 'update']);
+
+    // Rutas de directores que requieren autenticación
+    Route::put('/directors/{id}', [DirectorController::class, 'update']);
 });
 
 // Rutas de administrador para géneros (crear y eliminar)
@@ -52,6 +60,12 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/actors', [ActorController::class, 'store']);
     Route::delete('/actors/{id}', [ActorController::class, 'destroy']);
+});
+
+// Rutas de administrador para directores (crear y eliminar)
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::post('/directors', [DirectorController::class, 'store']);
+    Route::delete('/directors/{id}', [DirectorController::class, 'destroy']);
 });
 
 // Ruta para documentación Swagger
