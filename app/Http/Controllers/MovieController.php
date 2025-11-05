@@ -267,7 +267,7 @@ class MovieController extends Controller
         $posterPath = null;
 
         if ($request->hasFile('poster')) {
-            $posterPath = $request->file('poster')->store('posters', 'public');
+            $posterPath = $request->file('poster')->store('images/movies', 'public');
         }
 
         $movie = Movie::create([
@@ -445,10 +445,10 @@ class MovieController extends Controller
 
         if ($request->hasFile('poster')) {
             // Delete old poster if exists
-            if ($posterPath && Storage::disk('public')->exists('posters/' . $posterPath)) {
-                Storage::disk('public')->delete('posters/' . $posterPath);
+            if ($posterPath && Storage::disk('public')->exists($posterPath)) {
+                Storage::disk('public')->delete($posterPath);
             }
-            $posterPath = $request->file('poster')->store('posters', 'public');
+            $posterPath = $request->file('poster')->store('images/movies', 'public');
         }
 
         $movie->update([
@@ -502,8 +502,8 @@ class MovieController extends Controller
         }
 
         // Delete poster file if exists
-        if ($movie->poster_path && Storage::disk('public')->exists('posters/' . $movie->poster_path)) {
-            Storage::disk('public')->delete('posters/' . $movie->poster_path);
+        if ($movie->poster_path && Storage::disk('public')->exists($movie->poster_path)) {
+            Storage::disk('public')->delete($movie->poster_path);
         }
 
         $movie->delete();

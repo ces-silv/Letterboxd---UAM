@@ -33,10 +33,22 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'El email es obligatorio.',
-            'email.email' => 'Debe proporcionar un email válido.',
-            'email.max' => 'El email no puede exceder los 100 caracteres.',
-            'password.required' => 'La contraseña es obligatoria.',
+            'email.required' => [
+                'en' => 'The email is required.',
+                'es' => 'El email es obligatorio.'
+            ],
+            'email.email' => [
+                'en' => 'You must provide a valid email.',
+                'es' => 'Debe proporcionar un email válido.'
+            ],
+            'email.max' => [
+                'en' => 'The email cannot exceed 100 characters.',
+                'es' => 'El email no puede exceder los 100 caracteres.'
+            ],
+            'password.required' => [
+                'en' => 'The password is required.',
+                'es' => 'La contraseña es obligatoria.'
+            ],
         ];
     }
 }

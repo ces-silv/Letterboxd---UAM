@@ -34,12 +34,30 @@ class UpdateProfileRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'username.string' => 'El nombre de usuario debe ser una cadena de texto.',
-            'username.max' => 'El nombre de usuario no puede exceder los 50 caracteres.',
-            'username.unique' => 'Este nombre de usuario ya está en uso.',
-            'email.email' => 'Debe proporcionar un email válido.',
-            'email.max' => 'El email no puede exceder los 100 caracteres.',
-            'email.unique' => 'Este email ya está registrado.',
+            'username.string' => [
+                'en' => 'The username must be a string.',
+                'es' => 'El nombre de usuario debe ser una cadena de texto.'
+            ],
+            'username.max' => [
+                'en' => 'The username cannot exceed 50 characters.',
+                'es' => 'El nombre de usuario no puede exceder los 50 caracteres.'
+            ],
+            'username.unique' => [
+                'en' => 'This username is already in use.',
+                'es' => 'Este nombre de usuario ya está en uso.'
+            ],
+            'email.email' => [
+                'en' => 'You must provide a valid email.',
+                'es' => 'Debe proporcionar un email válido.'
+            ],
+            'email.max' => [
+                'en' => 'The email cannot exceed 100 characters.',
+                'es' => 'El email no puede exceder los 100 caracteres.'
+            ],
+            'email.unique' => [
+                'en' => 'This email is already registered.',
+                'es' => 'Este email ya está registrado.'
+            ],
         ];
     }
 

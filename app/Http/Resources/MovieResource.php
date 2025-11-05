@@ -21,7 +21,7 @@ class MovieResource extends JsonResource
             'director_id' => $this->director_id,
             'synopsis' => $this->synopsis,
             'duration' => $this->duration,
-            'poster_path' => $this->poster_path ? asset('storage/posters/' . $this->poster_path) : null,
+            'poster_path' => $this->poster_path ? asset('storage/' . $this->poster_path) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
