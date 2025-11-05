@@ -1,61 +1,171 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎬 Letterboxd UAM - API de Reseñas de Películas
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Una API REST para una plataforma de reseñas de películas construida con Laravel 11, inspirada en Letterboxd. Esta API proporciona gestión completa de películas, reseñas de usuarios, calificaciones y capacidades de búsqueda avanzada.
 
-## About Laravel
+## 🚀 Características
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Gestión Completa de Películas**: Operaciones CRUD para películas con metadatos ricos
+- **Autenticación de Usuarios**: Autenticación segura basada en JWT con Laravel Sanctum
+- **Búsqueda Avanzada**: Búsqueda multi-criterio por título, director, actor, género y fecha de lanzamiento
+- **Sistema de Reseñas**: Reseñas de usuarios con calificaciones de 1-5 estrellas y comentarios
+- **Gestión de Reparto**: Relaciones actor-película con nombres de personajes
+- **Clasificación por Géneros**: Sistema de categorización de películas
+- **Estadísticas y Analytics**: Calificaciones de películas, conteos de reseñas y métricas de engagement
+- **Contenido Popular**: Películas trending basadas en reseñas y calificaciones
+- **Documentación API**: Documentación completa Swagger/OpenAPI
+- **Acceso Basado en Roles**: Permisos de administrador y usuario
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ Tecnologías
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Framework**: Laravel 11
+- **Autenticación**: Laravel Sanctum
+- **Base de Datos**: PostgreSQL (con soporte de migración para otras bases de datos)
+- **Documentación API**: Swagger/OpenAPI (L5-Swagger)
+- **Validación**: Laravel Form Requests
+- **Gestión de Recursos**: Laravel API Resources
+- **Testing**: PHPUnit
 
-## Learning Laravel
+## 📚 Documentación API
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Accede a la documentación interactiva de la API en: `http://localhost:8000/api/documentation`
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Autenticación
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Todos los endpoints protegidos requieren autenticación Bearer token:
+```
+Authorization: Bearer {your-token}
+```
 
-## Laravel Sponsors
+### Resumen de Endpoints API
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### 🔐 Autenticación
+- `POST /api/register` - Registro de usuario
+- `POST /api/login` - Inicio de sesión
+- `POST /api/logout` - Cierre de sesión (autenticado)
+- `GET /api/user` - Obtener información del usuario actual (autenticado)
+- `PUT /api/profile` - Actualizar perfil de usuario (autenticado)
+- `PUT /api/change-password` - Cambiar contraseña (autenticado)
 
-### Premium Partners
+#### 🎭 Géneros (Público)
+- `GET /api/genres` - Listar todos los géneros
+- `GET /api/genres/{id}` - Obtener género específico
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+#### 🎬 Actores (Público)
+- `GET /api/actors` - Listar todos los actores
+- `GET /api/actors/{id}` - Obtener actor específico
 
-## Contributing
+#### 🎥 Directores (Público)
+- `GET /api/directors` - Listar todos los directores
+- `GET /api/directors/{id}` - Obtener director específico
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### 🎪 Películas
+- `GET /api/movies` - Listar películas (paginado)
+- `GET /api/movies/{id}` - Obtener detalles de película (con relaciones opcionales)
+- `GET /api/movies/search` - Búsqueda avanzada de películas
+- `GET /api/movies/popular` - Obtener películas populares
+- `GET /api/movies/{id}/statistics` - Obtener estadísticas de película
+- `POST /api/movies` - Crear película con subida de póster (solo admin)
+- `PUT /api/movies/{id}` - Actualizar película con subida de póster (solo admin)
+- `DELETE /api/movies/{id}` - Eliminar película (solo admin)
 
-## Code of Conduct
+#### 🎭 Reparto de Películas
+- `GET /api/movie-casts` - Listar todas las entradas de reparto
+- `GET /api/movie-casts/{id}` - Obtener entrada específica de reparto
+- `POST /api/movie-casts` - Crear entrada de reparto (solo admin)
+- `PUT /api/movie-casts/{id}` - Actualizar entrada de reparto (solo admin)
+- `DELETE /api/movie-casts/{id}` - Eliminar entrada de reparto (solo admin)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### ⭐ Reseñas
+- `GET /api/reviews` - Listar todas las reseñas (autenticado)
+- `GET /api/reviews/{id}` - Obtener reseña específica (autenticado)
+- `GET /api/reviews/my-reviews` - Obtener reseñas propias del usuario (autenticado)
+- `GET /api/movies/{movieId}/reviews` - Obtener reseñas de película específica
+- `POST /api/reviews` - Crear reseña (autenticado)
+- `PUT /api/reviews/{id}` - Actualizar reseña (solo propietario)
+- `DELETE /api/reviews/{id}` - Eliminar reseña (solo propietario)
 
-## Security Vulnerabilities
+#### 👑 Endpoints Solo Admin
+- `POST /api/genres` - Crear género
+- `PUT /api/genres/{id}` - Actualizar género
+- `DELETE /api/genres/{id}` - Eliminar género
+- `POST /api/actors` - Crear actor
+- `DELETE /api/actors/{id}` - Eliminar actor
+- `POST /api/directors` - Crear director
+- `DELETE /api/directors/{id}` - Eliminar director
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🔍 Ejemplos de Búsqueda Avanzada
 
-## License
+### Buscar por múltiples criterios:
+```
+GET /api/movies/search?title=Matrix&genre_id=1&release_date=1999-03-31
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Encontrar películas con actor específico:
+```
+GET /api/movies/search?actor_id=5
+```
+
+### Buscar por director y género:
+```
+GET /api/movies/search?director_id=2&genre_id=3
+```
+
+## 📊 Ejemplos de Respuestas
+
+### Película con Relaciones:
+```json
+{
+  "id": 1,
+  "title": "The Matrix",
+  "release_date": "1999-03-31",
+  "director": {
+    "id": 1,
+    "name": "Lana Wachowski"
+  },
+  "cast": [
+    {
+      "id": 1,
+      "name": "Keanu Reeves",
+      "character_name": "Neo"
+    }
+  ],
+  "reviews": {
+    "count": 150,
+    "average_rating": 4.2,
+    "data": [...]
+  }
+}
+```
+
+### Estadísticas de Película:
+```json
+{
+  "movie_id": 1,
+  "title": "The Matrix",
+  "statistics": {
+    "total_reviews": 150,
+    "average_rating": 4.2,
+    "rating_distribution": {
+      "1": 5,
+      "2": 10,
+      "3": 15,
+      "4": 40,
+      "5": 80
+    },
+    "recent_reviews_count": 25,
+    "last_review_date": "2024-11-01T10:30:00Z"
+  }
+}
+```
+
+## 🗂️ Esquema de Base de Datos
+
+La aplicación utiliza las siguientes entidades principales:
+- **Users**: Cuentas de usuario con roles
+- **Movies**: Catálogo de películas con metadatos
+- **Actors**: Información de actores
+- **Directors**: Información de directores
+- **Genres**: Géneros de películas
+- **Movie Cast**: Relación muchos-a-muchos entre películas y actores
+- **Reviews**: Reseñas de usuarios con calificaciones y comentarios
+```

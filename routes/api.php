@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\MovieCastController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ActorController;
 use App\Http\Controllers\DirectorController;
@@ -36,9 +37,17 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Películas
     Route::apiResource('movies', MovieController::class);
-    
+    Route::get('movies/search', [MovieController::class, 'search']);
+    Route::get('movies/popular', [MovieController::class, 'getPopular']);
+    Route::get('movies/{id}/statistics', [MovieController::class, 'getStatistics']);
+
+    // Reparto de películas
+    Route::apiResource('movie-casts', MovieCastController::class);
+
     // Reseñas
     Route::apiResource('reviews', ReviewController::class);
+    Route::get('movies/{movieId}/reviews', [ReviewController::class, 'getReviewsByMovie']);
+    Route::get('reviews/my-reviews', [ReviewController::class, 'getMyReviews']);
     
     // Rutas de géneros que requieren autenticación
     Route::put('/genres/{id}', [GenreController::class, 'update']);

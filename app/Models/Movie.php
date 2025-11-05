@@ -17,6 +17,7 @@ class Movie extends Model
         'director_id',
         'synopsis',
         'duration',
+        'poster_path',
     ];
 
     protected $casts = [
