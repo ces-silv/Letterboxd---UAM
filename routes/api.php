@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Reseñas (CRUD completo para usuarios autenticados)
     Route::apiResource('reviews', ReviewController::class);
     Route::get('/reviews/my-reviews', [ReviewController::class, 'getMyReviews']);
+    Route::get('/movies/{movieId}/review-status', [ReviewController::class, 'checkReviewStatus']);
 
     // Géneros (usuarios autenticados pueden actualizar)
     Route::put('/genres/{id}', [GenreController::class, 'update']);

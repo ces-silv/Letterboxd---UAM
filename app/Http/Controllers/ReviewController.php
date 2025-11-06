@@ -182,6 +182,73 @@ class ReviewController extends Controller
 
     /**
      * @OA\Get(
+     *     path="/api/movies/{movieId}/review-status",
+     *     summary="Verificar si el usuario autenticado ya ha reseñado una película",
+     *     tags={"Reseñas"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="movieId",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la película",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estado de la reseña obtenido exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="has_reviewed", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="review",
+     *                 type="object",
+     *                 nullable=true,
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="movie_id", type="integer"),
+     *                 @OA\Property(property="rating", type="integer"),
+     *                 @OA\Property(property="comment", type="string"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado - Se requiere autenticación"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Película no encontrada"
+     *     )
+     * )
+     */
+    public function checkReviewStatus(string $movieId): JsonResponse
+    {
+        // Verificar que la película existe
+        $movieExists = \App\Models\Movie::find($movieId);
+        if (!$movieExists) {
+            return response()->json(['message' => 'Película no encontrada'], 404);
+        }
+
+        $review = Review::where('user_id', Auth::id())
+            ->where('movie_id', $movieId)
+            ->first();
+
+        if ($review) {
+            return response()->json([
+                'has_reviewed' => true,
+                'review' => (new ReviewResource($review))->resolve()
+            ]);
+        }
+
+        return response()->json([
+            'has_reviewed' => false,
+            'review' => null
+        ]);
+    }
+
+    /**
+     * @OA\Get(
      *     path="/api/movies/{movieId}/reviews",
      *     summary="Listar todas las reseñas de una película específica",
      *     tags={"Reseñas"},
