@@ -399,10 +399,6 @@ class ReviewController extends Controller
      *         description="No autorizado - Se requiere autenticación"
      *     ),
      *     @OA\Response(
-     *         response=403,
-     *         description="Acceso denegado - Solo el propietario puede editar"
-     *     ),
-     *     @OA\Response(
      *         response=404,
      *         description="Reseña no encontrada"
      *     ),
@@ -418,11 +414,6 @@ class ReviewController extends Controller
 
         if (!$review) {
             return response()->json(['message' => 'Reseña no encontrada'], 404);
-        }
-
-        // Verificar que el usuario sea el propietario de la reseña
-        if ($review->user_id !== Auth::id()) {
-            return response()->json(['message' => 'No tienes permiso para editar esta reseña'], 403);
         }
 
         $review->update([
@@ -459,10 +450,6 @@ class ReviewController extends Controller
      *         description="No autorizado - Se requiere autenticación"
      *     ),
      *     @OA\Response(
-     *         response=403,
-     *         description="Acceso denegado - Solo el propietario puede eliminar"
-     *     ),
-     *     @OA\Response(
      *         response=404,
      *         description="Reseña no encontrada"
      *     )
@@ -474,11 +461,6 @@ class ReviewController extends Controller
 
         if (!$review) {
             return response()->json(['message' => 'Reseña no encontrada'], 404);
-        }
-
-        // Verificar que el usuario sea el propietario de la reseña
-        if ($review->user_id !== Auth::id()) {
-            return response()->json(['message' => 'No tienes permiso para eliminar esta reseña'], 403);
         }
 
         $review->delete();
