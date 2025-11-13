@@ -28,10 +28,10 @@ Route::get('/directors/{id}', [DirectorController::class, 'show']);
 
 // Películas (acceso público de solo lectura)
 Route::get('/movies', [MovieController::class, 'index']);
-Route::get('/movies/{id}', [MovieController::class, 'show']);
 Route::get('/movies/search', [MovieController::class, 'search']);
 Route::get('/movies/popular', [MovieController::class, 'getPopular']);
 Route::get('/movies/{id}/statistics', [MovieController::class, 'getStatistics']);
+Route::get('/movies/{id}', [MovieController::class, 'show']);
 
 // Reseñas de películas (acceso de lectura público)
 Route::get('/movies/{movieId}/reviews', [ReviewController::class, 'getReviewsByMovie']);
