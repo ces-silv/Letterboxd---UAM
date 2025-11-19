@@ -92,9 +92,15 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Las credenciales son incorrectas.'],
-            ]);
+            return response()->json([
+                'message' => 'Login failed',
+                'errors' => [
+                    'email' => [
+                        'en' => 'The provided credentials are incorrect.',
+                        'es' => 'Las credenciales proporcionadas son incorrectas.'
+                    ]
+                ]
+            ], 401);
         }
 
         $token = $user->createToken('auth-token')->plainTextToken;
