@@ -44,29 +44,17 @@ class GenreController extends Controller
      *                 property="data",
      *                 type="array",
      *                 @OA\Items(
-     *                     @OA\Property(property="genre_id", type="integer"),
-     *                     @OA\Property(property="genre_name", type="string"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="genre", type="string")
      *                 )
      *             ),
      *             @OA\Property(
-     *                 property="meta",
+     *                 property="pagination",
      *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="per_page", type="integer"),
      *                 @OA\Property(property="total", type="integer"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="to", type="integer")
-     *             ),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string"),
-     *                 @OA\Property(property="last", type="string"),
-     *                 @OA\Property(property="prev", type="string", nullable=true),
-     *                 @OA\Property(property="next", type="string", nullable=true)
+     *                 @OA\Property(property="actual", type="integer"),
+     *                 @OA\Property(property="pages", type="integer"),
+     *                 @OA\Property(property="index", type="integer")
      *             )
      *         )
      *     )
@@ -76,7 +64,16 @@ class GenreController extends Controller
     {
         $perPage = $request->input('per_page', 15);
         $genres = Genre::paginate($perPage);
-        return GenreResource::collection($genres)->response();
+        $data = collect($genres->items())->map(fn ($genre) => (new GenreResource($genre))->toArray($request));
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'total' => $genres->total(),
+                'actual' => $genres->currentPage(),
+                'pages' => $genres->lastPage(),
+                'index' => $genres->perPage(),
+            ],
+        ]);
     }
 
     /**

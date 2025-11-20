@@ -29,11 +29,10 @@ class AuthController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"username", "email", "password", "password_confirmation"},
+     *             required={"username", "email", "password"},
      *             @OA\Property(property="username", type="string", example="johndoe"),
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="password"),
-     *             @OA\Property(property="password_confirmation", type="string", format="password", example="password")
      *         )
      *     ),
      *     @OA\Response(
@@ -213,10 +212,9 @@ class AuthController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"current_password", "new_password", "new_password_confirmation"},
+     *             required={"current_password", "new_password"},
      *             @OA\Property(property="current_password", type="string", format="password", example="currentpassword"),
      *             @OA\Property(property="new_password", type="string", format="password", example="newpassword"),
-     *             @OA\Property(property="new_password_confirmation", type="string", format="password", example="newpassword")
      *         )
      *     ),
      *     @OA\Response(

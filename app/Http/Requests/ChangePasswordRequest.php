@@ -24,7 +24,7 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'current_password' => 'required|string',
-            'new_password' => 'required|string|min:6|confirmed',
+            'new_password' => 'required|string|min:6',
         ];
     }
 
@@ -37,7 +37,6 @@ class ChangePasswordRequest extends FormRequest
             'current_password.required' => 'La contraseña actual es obligatoria.',
             'new_password.required' => 'La nueva contraseña es obligatoria.',
             'new_password.min' => 'La nueva contraseña debe tener al menos 6 caracteres.',
-            'new_password.confirmed' => 'La confirmación de la nueva contraseña no coincide.',
         ];
     }
 

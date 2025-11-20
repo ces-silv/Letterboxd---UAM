@@ -47,7 +47,7 @@ class ReviewController extends Controller
      *                 type="array",
      *                 @OA\Items(
      *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="user_id", type="integer"),
+     *                     @OA\Property(property="user", type="string"),
      *                     @OA\Property(property="movie_id", type="integer"),
      *                     @OA\Property(property="rating", type="integer"),
      *                     @OA\Property(property="comment", type="string"),
@@ -56,22 +56,12 @@ class ReviewController extends Controller
      *                 )
      *             ),
      *             @OA\Property(
-     *                 property="meta",
+     *                 property="pagination",
      *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="per_page", type="integer"),
      *                 @OA\Property(property="total", type="integer"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="to", type="integer")
-     *             ),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string"),
-     *                 @OA\Property(property="last", type="string"),
-     *                 @OA\Property(property="prev", type="string", nullable=true),
-     *                 @OA\Property(property="next", type="string", nullable=true)
+     *                 @OA\Property(property="actual", type="integer"),
+     *                 @OA\Property(property="pages", type="integer"),
+     *                 @OA\Property(property="index", type="integer")
      *             )
      *         )
      *     ),
@@ -85,7 +75,16 @@ class ReviewController extends Controller
     {
         $perPage = $request->input('per_page', 15);
         $reviews = Review::paginate($perPage);
-        return ReviewResource::collection($reviews)->response();
+        $data = collect($reviews->items())->map(fn ($review) => (new ReviewResource($review))->toArray($request));
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'total' => $reviews->total(),
+                'actual' => $reviews->currentPage(),
+                'pages' => $reviews->lastPage(),
+                'index' => $reviews->perPage(),
+            ],
+        ]);
     }
 
     /**
@@ -140,22 +139,12 @@ class ReviewController extends Controller
      *                 )
      *             ),
      *             @OA\Property(
-     *                 property="meta",
+     *                 property="pagination",
      *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="per_page", type="integer"),
      *                 @OA\Property(property="total", type="integer"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="to", type="integer")
-     *             ),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string"),
-     *                 @OA\Property(property="last", type="string"),
-     *                 @OA\Property(property="prev", type="string", nullable=true),
-     *                 @OA\Property(property="next", type="string", nullable=true)
+     *                 @OA\Property(property="actual", type="integer"),
+     *                 @OA\Property(property="pages", type="integer"),
+     *                 @OA\Property(property="index", type="integer")
      *             )
      *         )
      *     ),
@@ -167,17 +156,36 @@ class ReviewController extends Controller
      */
     public function getMyReviews(Request $request): JsonResponse
     {
-        $query = Review::where('user_id', Auth::id());
-
-        // Include movie information if requested
-        if ($request->has('include') && in_array('movie', explode(',', $request->include))) {
-            $query->with('movie:id,movie_id,title,release_date');
-        }
+        $query = Review::where('user_id', Auth::id())->with('movie:movie_id,title,release_date');
 
         $perPage = $request->input('per_page', 15);
         $reviews = $query->paginate($perPage);
-
-        return ReviewResource::collection($reviews)->response();
+        $data = collect($reviews->items())->map(function ($review) {
+            $item = [
+                'id' => $review->review_id,
+                'user_id' => $review->user_id,
+                'movie_id' => $review->movie_id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+                'created_at' => $review->created_at,
+                'updated_at' => $review->updated_at,
+            ];
+            $item['movie'] = $review->movie ? [
+                'id' => $review->movie->movie_id,
+                'title' => $review->movie->title,
+                'release_date' => optional($review->movie->release_date)->format('Y-m-d'),
+            ] : null;
+            return $item;
+        });
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'total' => $reviews->total(),
+                'actual' => $reviews->currentPage(),
+                'pages' => $reviews->lastPage(),
+                'index' => $reviews->perPage(),
+            ],
+        ]);
     }
 
     /**
@@ -291,22 +299,12 @@ class ReviewController extends Controller
      *                 )
      *             ),
      *             @OA\Property(
-     *                 property="meta",
+     *                 property="pagination",
      *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="per_page", type="integer"),
      *                 @OA\Property(property="total", type="integer"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="to", type="integer")
-     *             ),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string"),
-     *                 @OA\Property(property="last", type="string"),
-     *                 @OA\Property(property="prev", type="string", nullable=true),
-     *                 @OA\Property(property="next", type="string", nullable=true)
+     *                 @OA\Property(property="actual", type="integer"),
+     *                 @OA\Property(property="pages", type="integer"),
+     *                 @OA\Property(property="index", type="integer")
      *             )
      *         )
      *     ),
@@ -325,8 +323,29 @@ class ReviewController extends Controller
         }
 
         $perPage = $request->input('per_page', 15);
-        $reviews = Review::where('movie_id', $movieId)->paginate($perPage);
-        return ReviewResource::collection($reviews)->response();
+        $reviews = Review::with('user:user_id,username')
+            ->where('movie_id', $movieId)
+            ->paginate($perPage);
+        $data = collect($reviews->items())->map(function ($review) {
+            return [
+                'id' => $review->review_id,
+                'user' => $review->user ? $review->user->username : null,
+                'movie_id' => $review->movie_id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+                'created_at' => $review->created_at,
+                'updated_at' => $review->updated_at,
+            ];
+        });
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'total' => $reviews->total(),
+                'actual' => $reviews->currentPage(),
+                'pages' => $reviews->lastPage(),
+                'index' => $reviews->perPage(),
+            ],
+        ]);
     }
 
     /**

@@ -47,28 +47,16 @@ class MovieCastController extends Controller
      *                     @OA\Property(property="id", type="integer"),
      *                     @OA\Property(property="movie_id", type="integer"),
      *                     @OA\Property(property="actor_id", type="integer"),
-     *                     @OA\Property(property="character_name", type="string"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                     @OA\Property(property="character_name", type="string")
      *                 )
      *             ),
      *             @OA\Property(
-     *                 property="meta",
+     *                 property="pagination",
      *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="per_page", type="integer"),
      *                 @OA\Property(property="total", type="integer"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="to", type="integer")
-     *             ),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string"),
-     *                 @OA\Property(property="last", type="string"),
-     *                 @OA\Property(property="prev", type="string", nullable=true),
-     *                 @OA\Property(property="next", type="string", nullable=true)
+     *                 @OA\Property(property="actual", type="integer"),
+     *                 @OA\Property(property="pages", type="integer"),
+     *                 @OA\Property(property="index", type="integer")
      *             )
      *         )
      *     )
@@ -78,7 +66,16 @@ class MovieCastController extends Controller
     {
         $perPage = $request->input('per_page', 15);
         $movieCasts = MovieCast::paginate($perPage);
-        return MovieCastResource::collection($movieCasts)->response();
+        $data = collect($movieCasts->items())->map(fn ($cast) => (new MovieCastResource($cast))->toArray($request));
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'total' => $movieCasts->total(),
+                'actual' => $movieCasts->currentPage(),
+                'pages' => $movieCasts->lastPage(),
+                'index' => $movieCasts->perPage(),
+            ],
+        ]);
     }
 
     /**

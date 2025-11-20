@@ -46,62 +46,29 @@
                                             "type": "array",
                                             "items": {
                                                 "properties": {
-                                                    "actor_id": {
+                                                    "id": {
                                                         "type": "integer"
                                                     },
-                                                    "actor_name": {
+                                                    "name": {
                                                         "type": "string"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
                                                     }
                                                 },
                                                 "type": "object"
                                             }
                                         },
-                                        "meta": {
+                                        "pagination": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
                                                 "total": {
                                                     "type": "integer"
                                                 },
-                                                "from": {
+                                                "actual": {
                                                     "type": "integer"
                                                 },
-                                                "to": {
+                                                "pages": {
                                                     "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
                                                 },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "next": {
-                                                    "type": "string",
-                                                    "nullable": true
+                                                "index": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "type": "object"
@@ -371,8 +338,7 @@
                                 "required": [
                                     "username",
                                     "email",
-                                    "password",
-                                    "password_confirmation"
+                                    "password"
                                 ],
                                 "properties": {
                                     "username": {
@@ -385,11 +351,6 @@
                                         "example": "john@example.com"
                                     },
                                     "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password"
-                                    },
-                                    "password_confirmation": {
                                         "type": "string",
                                         "format": "password",
                                         "example": "password"
@@ -612,8 +573,7 @@
                             "schema": {
                                 "required": [
                                     "current_password",
-                                    "new_password",
-                                    "new_password_confirmation"
+                                    "new_password"
                                 ],
                                 "properties": {
                                     "current_password": {
@@ -622,11 +582,6 @@
                                         "example": "currentpassword"
                                     },
                                     "new_password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "newpassword"
-                                    },
-                                    "new_password_confirmation": {
                                         "type": "string",
                                         "format": "password",
                                         "example": "newpassword"
@@ -695,62 +650,29 @@
                                             "type": "array",
                                             "items": {
                                                 "properties": {
-                                                    "director_id": {
+                                                    "id": {
                                                         "type": "integer"
                                                     },
-                                                    "director_name": {
+                                                    "name": {
                                                         "type": "string"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
                                                     }
                                                 },
                                                 "type": "object"
                                             }
                                         },
-                                        "meta": {
+                                        "pagination": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
                                                 "total": {
                                                     "type": "integer"
                                                 },
-                                                "from": {
+                                                "actual": {
                                                     "type": "integer"
                                                 },
-                                                "to": {
+                                                "pages": {
                                                     "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
                                                 },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "next": {
-                                                    "type": "string",
-                                                    "nullable": true
+                                                "index": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "type": "object"
@@ -1045,62 +967,29 @@
                                             "type": "array",
                                             "items": {
                                                 "properties": {
-                                                    "genre_id": {
+                                                    "id": {
                                                         "type": "integer"
                                                     },
-                                                    "genre_name": {
+                                                    "genre": {
                                                         "type": "string"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
                                                     }
                                                 },
                                                 "type": "object"
                                             }
                                         },
-                                        "meta": {
+                                        "pagination": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
                                                 "total": {
                                                     "type": "integer"
                                                 },
-                                                "from": {
+                                                "actual": {
                                                     "type": "integer"
                                                 },
-                                                "to": {
+                                                "pages": {
                                                     "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
                                                 },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "next": {
-                                                    "type": "string",
-                                                    "nullable": true
+                                                "index": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "type": "object"
@@ -1370,57 +1259,24 @@
                                                     },
                                                     "character_name": {
                                                         "type": "string"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
                                                     }
                                                 },
                                                 "type": "object"
                                             }
                                         },
-                                        "meta": {
+                                        "pagination": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
                                                 "total": {
                                                     "type": "integer"
                                                 },
-                                                "from": {
+                                                "actual": {
                                                     "type": "integer"
                                                 },
-                                                "to": {
+                                                "pages": {
                                                     "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
                                                 },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "next": {
-                                                    "type": "string",
-                                                    "nullable": true
+                                                "index": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "type": "object"
@@ -1784,44 +1640,19 @@
                                                 "type": "object"
                                             }
                                         },
-                                        "meta": {
+                                        "pagination": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
                                                 "total": {
                                                     "type": "integer"
                                                 },
-                                                "from": {
+                                                "actual": {
                                                     "type": "integer"
                                                 },
-                                                "to": {
+                                                "pages": {
                                                     "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
                                                 },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "next": {
-                                                    "type": "string",
-                                                    "nullable": true
+                                                "index": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "type": "object"
@@ -2051,44 +1882,19 @@
                                                 "type": "object"
                                             }
                                         },
-                                        "meta": {
+                                        "pagination": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
                                                 "total": {
                                                     "type": "integer"
                                                 },
-                                                "from": {
+                                                "actual": {
                                                     "type": "integer"
                                                 },
-                                                "to": {
+                                                "pages": {
                                                     "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
                                                 },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "next": {
-                                                    "type": "string",
-                                                    "nullable": true
+                                                "index": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "type": "object"
@@ -2611,8 +2417,8 @@
                                                     "id": {
                                                         "type": "integer"
                                                     },
-                                                    "user_id": {
-                                                        "type": "integer"
+                                                    "user": {
+                                                        "type": "string"
                                                     },
                                                     "movie_id": {
                                                         "type": "integer"
@@ -2635,44 +2441,19 @@
                                                 "type": "object"
                                             }
                                         },
-                                        "meta": {
+                                        "pagination": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
                                                 "total": {
                                                     "type": "integer"
                                                 },
-                                                "from": {
+                                                "actual": {
                                                     "type": "integer"
                                                 },
-                                                "to": {
+                                                "pages": {
                                                     "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
                                                 },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "next": {
-                                                    "type": "string",
-                                                    "nullable": true
+                                                "index": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "type": "object"
@@ -2872,44 +2653,19 @@
                                                 "type": "object"
                                             }
                                         },
-                                        "meta": {
+                                        "pagination": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
                                                 "total": {
                                                     "type": "integer"
                                                 },
-                                                "from": {
+                                                "actual": {
                                                     "type": "integer"
                                                 },
-                                                "to": {
+                                                "pages": {
                                                     "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
                                                 },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "next": {
-                                                    "type": "string",
-                                                    "nullable": true
+                                                "index": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "type": "object"
@@ -2922,6 +2678,84 @@
                     },
                     "401": {
                         "description": "No autorizado - Se requiere autenticación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/movies/{movieId}/review-status": {
+            "get": {
+                "tags": [
+                    "Reseñas"
+                ],
+                "summary": "Verificar si el usuario autenticado ya ha reseñado una película",
+                "operationId": "118bfb0d28f8039da70e04633791c072",
+                "parameters": [
+                    {
+                        "name": "movieId",
+                        "in": "path",
+                        "description": "ID de la película",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Estado de la reseña obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "has_reviewed": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "review": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "user_id": {
+                                                    "type": "integer"
+                                                },
+                                                "movie_id": {
+                                                    "type": "integer"
+                                                },
+                                                "rating": {
+                                                    "type": "integer"
+                                                },
+                                                "comment": {
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autorizado - Se requiere autenticación"
+                    },
+                    "404": {
+                        "description": "Película no encontrada"
                     }
                 },
                 "security": [
@@ -3007,44 +2841,19 @@
                                                 "type": "object"
                                             }
                                         },
-                                        "meta": {
+                                        "pagination": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer"
-                                                },
                                                 "total": {
                                                     "type": "integer"
                                                 },
-                                                "from": {
+                                                "actual": {
                                                     "type": "integer"
                                                 },
-                                                "to": {
+                                                "pages": {
                                                     "type": "integer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "links": {
-                                            "properties": {
-                                                "first": {
-                                                    "type": "string"
                                                 },
-                                                "last": {
-                                                    "type": "string"
-                                                },
-                                                "prev": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "next": {
-                                                    "type": "string",
-                                                    "nullable": true
+                                                "index": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "type": "object"
@@ -3215,9 +3024,6 @@
                     "401": {
                         "description": "No autorizado - Se requiere autenticación"
                     },
-                    "403": {
-                        "description": "Acceso denegado - Solo el propietario puede editar"
-                    },
                     "404": {
                         "description": "Reseña no encontrada"
                     },
@@ -3267,9 +3073,6 @@
                     },
                     "401": {
                         "description": "No autorizado - Se requiere autenticación"
-                    },
-                    "403": {
-                        "description": "Acceso denegado - Solo el propietario puede eliminar"
                     },
                     "404": {
                         "description": "Reseña no encontrada"

@@ -9,6 +9,7 @@ class MovieCast extends Model
 {
     use HasFactory;
 
+    protected $table = 'movie_cast';
     protected $primaryKey = 'cast_id';
 
     protected $fillable = [

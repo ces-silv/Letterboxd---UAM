@@ -56,22 +56,12 @@ class MovieController extends Controller
      *                 )
      *             ),
      *             @OA\Property(
-     *                 property="meta",
+     *                 property="pagination",
      *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="per_page", type="integer"),
      *                 @OA\Property(property="total", type="integer"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="to", type="integer")
-     *             ),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string"),
-     *                 @OA\Property(property="last", type="string"),
-     *                 @OA\Property(property="prev", type="string", nullable=true),
-     *                 @OA\Property(property="next", type="string", nullable=true)
+     *                 @OA\Property(property="actual", type="integer"),
+     *                 @OA\Property(property="pages", type="integer"),
+     *                 @OA\Property(property="index", type="integer")
      *             )
      *         )
      *     )
@@ -81,7 +71,16 @@ class MovieController extends Controller
     {
         $perPage = $request->input('per_page', 15);
         $movies = Movie::paginate($perPage);
-        return MovieResource::collection($movies)->response();
+        $data = collect($movies->items())->map(fn ($movie) => (new MovieResource($movie))->toArray($request));
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'total' => $movies->total(),
+                'actual' => $movies->currentPage(),
+                'pages' => $movies->lastPage(),
+                'index' => $movies->perPage(),
+            ],
+        ]);
     }
 
     /**
@@ -157,22 +156,12 @@ class MovieController extends Controller
      *                 )
      *             ),
      *             @OA\Property(
-     *                 property="meta",
+     *                 property="pagination",
      *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="per_page", type="integer"),
      *                 @OA\Property(property="total", type="integer"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="to", type="integer")
-     *             ),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string"),
-     *                 @OA\Property(property="last", type="string"),
-     *                 @OA\Property(property="prev", type="string", nullable=true),
-     *                 @OA\Property(property="next", type="string", nullable=true)
+     *                 @OA\Property(property="actual", type="integer"),
+     *                 @OA\Property(property="pages", type="integer"),
+     *                 @OA\Property(property="index", type="integer")
      *             )
      *         )
      *     ),
@@ -217,8 +206,16 @@ class MovieController extends Controller
 
         $perPage = $request->input('per_page', 15);
         $movies = $query->paginate($perPage);
-
-        return MovieResource::collection($movies)->response();
+        $data = collect($movies->items())->map(fn ($movie) => (new MovieResource($movie))->toArray($request));
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'total' => $movies->total(),
+                'actual' => $movies->currentPage(),
+                'pages' => $movies->lastPage(),
+                'index' => $movies->perPage(),
+            ],
+        ]);
     }
 
     /**

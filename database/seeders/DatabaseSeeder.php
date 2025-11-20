@@ -15,6 +15,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create();
+        \App\Models\User::updateOrCreate(
+            ['email' => 'admin@letterboxd-uam.local'],
+            [
+                'username' => 'admin',
+                'password' => \Illuminate\Support\Facades\Hash::make('Cr!quaL0v3r_1234'),
+                'role' => 'A',
+                'registration_date' => now(),
+            ]
+        );
+        $this->call([
+            DirectorSeeder::class,
+            GenreSeeder::class,
+            MovieSeeder::class,
+            ActorSeeder::class,
+            MovieCastSeeder::class,
+        ]);
     }
 }

@@ -44,29 +44,17 @@ class DirectorController extends Controller
      *                 property="data",
      *                 type="array",
      *                 @OA\Items(
-     *                     @OA\Property(property="director_id", type="integer"),
-     *                     @OA\Property(property="director_name", type="string"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="name", type="string")
      *                 )
      *             ),
      *             @OA\Property(
-     *                 property="meta",
+     *                 property="pagination",
      *                 type="object",
-     *                 @OA\Property(property="current_page", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="per_page", type="integer"),
      *                 @OA\Property(property="total", type="integer"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="to", type="integer")
-     *             ),
-     *             @OA\Property(
-     *                 property="links",
-     *                 type="object",
-     *                 @OA\Property(property="first", type="string"),
-     *                 @OA\Property(property="last", type="string"),
-     *                 @OA\Property(property="prev", type="string", nullable=true),
-     *                 @OA\Property(property="next", type="string", nullable=true)
+     *                 @OA\Property(property="actual", type="integer"),
+     *                 @OA\Property(property="pages", type="integer"),
+     *                 @OA\Property(property="index", type="integer")
      *             )
      *         )
      *     )
@@ -76,7 +64,16 @@ class DirectorController extends Controller
     {
         $perPage = $request->input('per_page', 15);
         $directors = Director::paginate($perPage);
-        return DirectorResource::collection($directors)->response();
+        $data = collect($directors->items())->map(fn ($director) => (new DirectorResource($director))->toArray($request));
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'total' => $directors->total(),
+                'actual' => $directors->currentPage(),
+                'pages' => $directors->lastPage(),
+                'index' => $directors->perPage(),
+            ],
+        ]);
     }
 
     /**

@@ -33,6 +33,10 @@ Route::get('/movies/popular', [MovieController::class, 'getPopular']);
 Route::get('/movies/{id}/statistics', [MovieController::class, 'getStatistics']);
 Route::get('/movies/{id}', [MovieController::class, 'show']);
 
+// Reparto de películas (acceso público de solo lectura)
+Route::get('/movie-casts', [MovieCastController::class, 'index']);
+Route::get('/movie-casts/{id}', [MovieCastController::class, 'show']);
+
 // Reseñas de películas (acceso de lectura público)
 Route::get('/movies/{movieId}/reviews', [ReviewController::class, 'getReviewsByMovie']);
 
@@ -50,9 +54,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::put('/change-password', [AuthController::class, 'changePassword']);
 
-    // Reseñas (CRUD completo para usuarios autenticados)
-    Route::apiResource('reviews', ReviewController::class);
     Route::get('/reviews/my-reviews', [ReviewController::class, 'getMyReviews']);
+    Route::apiResource('reviews', ReviewController::class);
     Route::get('/movies/{movieId}/review-status', [ReviewController::class, 'checkReviewStatus']);
 
     // Géneros (usuarios autenticados pueden actualizar)
@@ -72,8 +75,8 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::apiResource('movies', MovieController::class)->except(['index', 'show']);
     // Nota: index, show, search, popular, statistics son públicos arriba
 
-    // Reparto de películas (CRUD completo - solo admin)
-    Route::apiResource('movie-casts', MovieCastController::class);
+    // Reparto de películas (crear/actualizar/eliminar - solo admin)
+    Route::apiResource('movie-casts', MovieCastController::class)->except(['index', 'show']);
 
     // Géneros (crear/eliminar - solo admin)
     Route::post('/genres', [GenreController::class, 'store']);
