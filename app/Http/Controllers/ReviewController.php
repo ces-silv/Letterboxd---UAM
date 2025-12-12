@@ -73,7 +73,7 @@ class ReviewController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = $request->input('per_page', 15);
+        $perPage = min((int) $request->input('per_page', 15), 100);
         $reviews = Review::paginate($perPage);
         $data = collect($reviews->items())->map(fn ($review) => (new ReviewResource($review))->toArray($request));
         return response()->json([
@@ -158,7 +158,7 @@ class ReviewController extends Controller
     {
         $query = Review::where('user_id', Auth::id())->with('movie:movie_id,title,release_date');
 
-        $perPage = $request->input('per_page', 15);
+        $perPage = min((int) $request->input('per_page', 15), 100);
         $reviews = $query->paginate($perPage);
         $data = collect($reviews->items())->map(function ($review) {
             $item = [
@@ -322,7 +322,7 @@ class ReviewController extends Controller
             return response()->json(['message' => 'Película no encontrada'], 404);
         }
 
-        $perPage = $request->input('per_page', 15);
+        $perPage = min((int) $request->input('per_page', 15), 100);
         $reviews = Review::with('user:user_id,username')
             ->where('movie_id', $movieId)
             ->paginate($perPage);

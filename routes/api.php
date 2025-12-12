@@ -73,6 +73,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
     // Películas (CRUD completo - solo admin)
     Route::apiResource('movies', MovieController::class)->except(['index', 'show']);
+    Route::post('/movies/{id}', [MovieController::class, 'update']);
     // Nota: index, show, search, popular, statistics son públicos arriba
 
     // Reparto de películas (crear/actualizar/eliminar - solo admin)

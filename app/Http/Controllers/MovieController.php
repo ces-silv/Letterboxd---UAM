@@ -8,6 +8,9 @@ use App\Http\Requests\UpdateMovieRequest;
 use App\Http\Resources\MovieResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -69,18 +72,63 @@ class MovieController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = $request->input('per_page', 15);
-        $movies = Movie::paginate($perPage);
-        $data = collect($movies->items())->map(fn ($movie) => (new MovieResource($movie))->toArray($request));
-        return response()->json([
-            'data' => $data,
-            'pagination' => [
-                'total' => $movies->total(),
-                'actual' => $movies->currentPage(),
-                'pages' => $movies->lastPage(),
-                'index' => $movies->perPage(),
-            ],
-        ]);
+        $perPage = min((int) $request->input('per_page', 15), 100);
+        $page = (int) $request->input('page', 1);
+        $includeParam = (string) $request->input('include', '');
+        $includeSignature = implode(',', collect(array_filter(array_map('trim', explode(',', $includeParam))))->sort()->all());
+        $cacheKey = "movies:index:{$perPage}:{$page}:{$includeSignature}";
+
+        $payload = Cache::remember($cacheKey, 120, function () use ($request, $perPage, $includeSignature) {
+            $query = Movie::query();
+
+            if (!empty($includeSignature)) {
+                $includes = explode(',', $includeSignature);
+                $relations = [];
+
+                if (in_array('director', $includes)) {
+                    $relations['director'] = function ($q) {
+                        $q->select('director_id', 'director_name');
+                    };
+                }
+                if (in_array('cast', $includes)) {
+                    $relations['actors'] = function ($q) {
+                        $q->select('actor_id', 'actor_name');
+                    };
+                }
+                if (in_array('genres', $includes)) {
+                    $relations['genres'] = function ($q) {
+                        $q->select('genre_id', 'genre_name');
+                    };
+                }
+                if (in_array('reviews', $includes)) {
+                    $relations['reviews'] = function ($q) {
+                        $q->select('review_id', 'user_id', 'movie_id', 'rating', 'comment', 'created_at');
+                    };
+                }
+
+                if (!empty($relations)) {
+                    $query->with($relations);
+                }
+            }
+
+            $movies = $query
+                ->select('movie_id', 'title', 'release_date', 'director_id', 'synopsis', 'duration', 'poster_path', 'created_at', 'updated_at')
+                ->paginate($perPage);
+
+            $data = collect($movies->items())->map(fn ($movie) => (new MovieResource($movie))->toArray($request))->all();
+
+            return [
+                'data' => $data,
+                'pagination' => [
+                    'total' => $movies->total(),
+                    'actual' => $movies->currentPage(),
+                    'pages' => $movies->lastPage(),
+                    'index' => $movies->perPage(),
+                ],
+            ];
+        });
+
+        return response()->json($payload);
     }
 
     /**
@@ -177,7 +225,17 @@ class MovieController extends Controller
 
         // Búsqueda por título (búsqueda parcial, case insensitive)
         if ($request->has('title') && !empty($request->title)) {
-            $query->where('title', 'ILIKE', '%' . $request->title . '%');
+            $driver = DB::getDriverName();
+            $term = trim((string) $request->title);
+            if ($driver === 'pgsql') {
+                $query->where('title', 'ILIKE', '%' . $term . '%');
+            } elseif ($driver === 'sqlite' && Schema::hasTable('movies_fts')) {
+                $query->whereIn('movie_id', DB::table('movies_fts')
+                    ->selectRaw('rowid')
+                    ->whereRaw('movies_fts MATCH ?', [$term . '*']));
+            } else {
+                $query->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($term) . '%']);
+            }
         }
 
         // Búsqueda por fecha de lanzamiento exacta
@@ -204,18 +262,72 @@ class MovieController extends Controller
             });
         }
 
-        $perPage = $request->input('per_page', 15);
-        $movies = $query->paginate($perPage);
-        $data = collect($movies->items())->map(fn ($movie) => (new MovieResource($movie))->toArray($request));
-        return response()->json([
-            'data' => $data,
-            'pagination' => [
-                'total' => $movies->total(),
-                'actual' => $movies->currentPage(),
-                'pages' => $movies->lastPage(),
-                'index' => $movies->perPage(),
-            ],
+        $perPage = min((int) $request->input('per_page', 15), 100);
+        $page = (int) $request->input('page', 1);
+        $includeParam = (string) $request->input('include', '');
+        $includeSignature = implode(',', collect(array_filter(array_map('trim', explode(',', $includeParam))))->sort()->all());
+
+        $signature = implode('|', [
+            'title=' . strtolower((string) $request->input('title', '')),
+            'release_date=' . (string) $request->input('release_date', ''),
+            'director_id=' . (string) $request->input('director_id', ''),
+            'actor_id=' . (string) $request->input('actor_id', ''),
+            'genre_id=' . (string) $request->input('genre_id', ''),
+            'per_page=' . $perPage,
+            'page=' . $page,
+            'include=' . $includeSignature,
         ]);
+        $cacheKey = "movies:search:{$signature}";
+
+        $payload = Cache::remember($cacheKey, 120, function () use ($request, $query, $perPage, $includeSignature) {
+            if (!empty($includeSignature)) {
+                $includes = explode(',', $includeSignature);
+                $relations = [];
+
+                if (in_array('director', $includes)) {
+                    $relations['director'] = function ($q) {
+                        $q->select('director_id', 'director_name');
+                    };
+                }
+                if (in_array('cast', $includes)) {
+                    $relations['actors'] = function ($q) {
+                        $q->select('actor_id', 'actor_name');
+                    };
+                }
+                if (in_array('genres', $includes)) {
+                    $relations['genres'] = function ($q) {
+                        $q->select('genre_id', 'genre_name');
+                    };
+                }
+                if (in_array('reviews', $includes)) {
+                    $relations['reviews'] = function ($q) {
+                        $q->select('review_id', 'user_id', 'movie_id', 'rating', 'comment', 'created_at');
+                    };
+                }
+
+                if (!empty($relations)) {
+                    $query->with($relations);
+                }
+            }
+
+            $movies = $query
+                ->select('movie_id', 'title', 'release_date', 'director_id', 'synopsis', 'duration', 'poster_path', 'created_at', 'updated_at')
+                ->paginate($perPage);
+
+            $data = collect($movies->items())->map(fn ($movie) => (new MovieResource($movie))->toArray($request))->all();
+
+            return [
+                'data' => $data,
+                'pagination' => [
+                    'total' => $movies->total(),
+                    'actual' => $movies->currentPage(),
+                    'pages' => $movies->lastPage(),
+                    'index' => $movies->perPage(),
+                ],
+            ];
+        });
+
+        return response()->json($payload);
     }
 
     /**
@@ -554,43 +666,57 @@ class MovieController extends Controller
      */
     public function getPopular(Request $request): JsonResponse
     {
-        $limit = min($request->input('limit', 10), 50); // Máximo 50 películas
+        $limit = min((int) $request->input('limit', 10), 50);
+        $includeParam = (string) $request->input('include', '');
+        $includeSignature = implode(',', collect(array_filter(array_map('trim', explode(',', $includeParam))))->sort()->all());
+        $cacheKey = "popular:{$limit}:{$includeSignature}";
 
-        $movies = Movie::withCount('reviews')
-            ->with(['reviews' => function ($query) {
-                $query->selectRaw('movie_id, AVG(rating) as average_rating')
-                      ->groupBy('movie_id');
-            }])
-            ->orderBy('reviews_count', 'desc')
-            ->orderByRaw('(SELECT AVG(rating) FROM reviews WHERE reviews.movie_id = movies.movie_id) DESC')
-            ->limit($limit)
-            ->get();
+        $movies = Cache::remember($cacheKey, 300, function () use ($limit, $includeSignature) {
+            $base = Movie::query()
+                ->withCount('reviews')
+                ->withAvg('reviews', 'rating')
+                ->orderByDesc('reviews_count')
+                ->orderByDesc('reviews_avg_rating')
+                ->select('movie_id', 'title', 'release_date', 'director_id', 'synopsis', 'duration', 'poster_path', 'created_at', 'updated_at')
+                ->limit($limit)
+                ->get();
 
-        // Load additional relationships if requested
-        if ($request->has('include')) {
-            $includes = explode(',', $request->include);
-
-            if (in_array('director', $includes)) {
-                $movies->load('director');
+            if (!empty($includeSignature)) {
+                $includes = explode(',', $includeSignature);
+                $relations = [];
+                if (in_array('director', $includes)) {
+                    $relations['director'] = function ($q) {
+                        $q->select('director_id', 'director_name');
+                    };
+                }
+                if (in_array('cast', $includes)) {
+                    $relations['actors'] = function ($q) {
+                        $q->select('actor_id', 'actor_name');
+                    };
+                }
+                if (in_array('genres', $includes)) {
+                    $relations['genres'] = function ($q) {
+                        $q->select('genre_id', 'genre_name');
+                    };
+                }
+                if (in_array('reviews', $includes)) {
+                    $relations['reviews'] = function ($q) {
+                        $q->select('review_id', 'user_id', 'movie_id', 'rating', 'comment', 'created_at');
+                    };
+                }
+                if (!empty($relations)) {
+                    $base->load($relations);
+                }
             }
 
-            if (in_array('cast', $includes)) {
-                $movies->load('actors');
-            }
-
-            if (in_array('reviews', $includes)) {
-                $movies->load('reviews');
-            }
-        }
-
-        // Transform the data to include reviews summary
-        $movies->transform(function ($movie) {
-            $movieArray = $movie->toArray();
-            $movieArray['reviews_summary'] = [
-                'count' => $movie->reviews_count,
-                'average_rating' => $movie->reviews->avg('rating') ?? 0
-            ];
-            return $movieArray;
+            return $base->map(function ($movie) {
+                $arr = $movie->toArray();
+                $arr['reviews_summary'] = [
+                    'count' => $movie->reviews_count,
+                    'average_rating' => round((float) ($movie->reviews_avg_rating ?? 0), 2),
+                ];
+                return $arr;
+            });
         });
 
         return response()->json($movies);
@@ -645,33 +771,34 @@ class MovieController extends Controller
             return response()->json(['message' => 'Película no encontrada'], 404);
         }
 
-        $reviews = $movie->reviews;
+        $distributionRows = \App\Models\Review::where('movie_id', $movie->movie_id)
+            ->selectRaw('rating, COUNT(*) as count')
+            ->groupBy('rating')
+            ->get()
+            ->pluck('count', 'rating')
+            ->toArray();
 
-        // Calcular distribución de calificaciones
         $ratingDistribution = [
-            1 => 0,
-            2 => 0,
-            3 => 0,
-            4 => 0,
-            5 => 0,
+            1 => $distributionRows[1] ?? 0,
+            2 => $distributionRows[2] ?? 0,
+            3 => $distributionRows[3] ?? 0,
+            4 => $distributionRows[4] ?? 0,
+            5 => $distributionRows[5] ?? 0,
         ];
 
-        foreach ($reviews as $review) {
-            $ratingDistribution[$review->rating]++;
-        }
-
-        // Calcular reseñas recientes (últimos 30 días)
-        $recentReviewsCount = $reviews->where('created_at', '>=', now()->subDays(30))->count();
-
-        // Fecha de la última reseña
-        $lastReviewDate = $reviews->max('created_at');
+        $totalReviews = \App\Models\Review::where('movie_id', $movie->movie_id)->count();
+        $averageRating = \App\Models\Review::where('movie_id', $movie->movie_id)->avg('rating') ?? 0;
+        $recentReviewsCount = \App\Models\Review::where('movie_id', $movie->movie_id)
+            ->where('created_at', '>=', now()->subDays(30))
+            ->count();
+        $lastReviewDate = \App\Models\Review::where('movie_id', $movie->movie_id)->max('created_at');
 
         $statistics = [
             'movie_id' => $movie->movie_id,
             'title' => $movie->title,
             'statistics' => [
-                'total_reviews' => $reviews->count(),
-                'average_rating' => $reviews->avg('rating') ?? 0,
+                'total_reviews' => $totalReviews,
+                'average_rating' => $averageRating,
                 'rating_distribution' => $ratingDistribution,
                 'recent_reviews_count' => $recentReviewsCount,
                 'last_review_date' => $lastReviewDate,
